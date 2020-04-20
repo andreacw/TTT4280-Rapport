@@ -3,7 +3,7 @@ from lab4 import *
 # read and extract data from file
 # path, fps = read_video()
 fps = 40
-data = read_file('datafiler/reflektans3')
+data = read_file('datafiler/transmittans1')
 
 # defining color channels
 colors = ["red", "green", "blue"]

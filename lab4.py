@@ -90,13 +90,15 @@ def butter_highpass_filter(data, cutoff, fps, order):
 
 # savgol_filter implements a 4. order savgol filter
 def savgol_filter(data, width): 
-    return signal.savgol_filter(data, width-1, 2)
+    return signal.savgol_filter(data, width-1, 4)
 
 # takes cross corrolation and returns array of peaks and filtered heights
 # also removes peaks that are so close they produce a pulse larger than MAXPULSE
 def peak_finder(corr):
-    peaks, _ = signal.find_peaks(corr, distance=(40*60)//MAXPULSE)   # the distance arg sets a minimum distance between peaks
+    height = savgol_filter(corr, WINDOW)
+    peaks, _ = signal.find_peaks(corr, height=height, distance=(40*60)//MAXPULSE)   # the distance arg sets a minimum distance between peaks
     return peaks
+
 
 # pulse_finder(peaks) takes in an array of peaks and calculates pulse
 # it also removes values outside
