@@ -82,10 +82,8 @@ def read_file(path):
     return data
 
 
-
 def butter_highpass_filter(data, cutoff, fps, order):
     normal_cutoff = cutoff / (0.5 * fps)
-    # Get the filter coefficients 
     b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
     y = signal.filtfilt(b, a, data)
     return y
@@ -97,11 +95,8 @@ def savgol_filter(data, width):
 # takes cross corrolation and returns array of peaks and filtered heights
 # also removes peaks that are so close they produce a pulse larger than MAXPULSE
 def peak_finder(corr):
-    height = savgol_filter(corr, WINDOW)
-    peaks, _ = signal.find_peaks(corr, height=height, distance=(40*60)//MAXPULSE)   # the distance arg sets a minimum distance between peaks
-   # peaks, _ = signal.find_peaks(corr, distance=(40*60)//MAXPULSE)   # the distance arg sets a minimum distance between peaks
-
-    return peaks, height
+    peaks, _ = signal.find_peaks(corr, distance=(40*60)//MAXPULSE)   # the distance arg sets a minimum distance between peaks
+    return peaks
 
 # pulse_finder(peaks) takes in an array of peaks and calculates pulse
 # it also removes values outside

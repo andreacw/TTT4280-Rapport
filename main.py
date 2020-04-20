@@ -12,7 +12,6 @@ colors = ["red", "green", "blue"]
 corrs = []
 lags = []
 peaks = []
-heights = []
 pulses = []
 
 
@@ -27,27 +26,34 @@ n = int(T * fps) # total number of samples
 # plots detrended data
 plt.figure(figsize=(8,6))
 plt.title("Detrended data in the time domain", fontsize=12)
+plt.subplot(2, 1, 1)
+plt.title('Before filtering', fontsize=10)
 for i in range(3):
-    plt.plot(np.linspace(0, 30, len(data)), data[:, i], linestyle='dashed', color=colors[i], label=colors[i])
+    plt.plot(np.linspace(0, 30, len(data)), data[:, i], linestyle='solid', color=colors[i], label=colors[i])
     plt.xlabel('time (s)')
+plt.legend()
+plt.subplot(2, 1, 2)
+plt.title('After filtering', fontsize=10)
 for i in range(3):
     data[:,i] = butter_highpass_filter(data[:,i], cutoff, fps, order)
     plt.plot(np.linspace(0, 30, len(data)), data[:, i], linestyle='solid', color=colors[i], label=colors[i])
     plt.xlabel('time (s)')
 plt.legend()
+plt.subplots_adjust(hspace=0.5)
 plt.show()
+
+
 
 
 # runs the functions defined in utility functions for each color channel
 for i in range(3):
     lag, corr, _, _ = plt.xcorr(data[:, i], data[:, i], normed=False, usevlines=False, maxlags=WINDOW//2)
     plt.close()
-    peak, height = peak_finder(corr)
+    peak = peak_finder(corr)
     puls = pulse_finder(peak, fps)
     corrs.append(corr)
     lags.append(lag)
     peaks.append(peak)
-    heights.append(height)
     pulses.append(puls)
     print("Pulse for ", colors[i], " channel: \t", puls)
 
@@ -58,7 +64,6 @@ for i in range(3):
     plt.subplot(3, 1, i+1)
     plt.title(colors[i].capitalize(), fontsize=10)
     plt.plot(lags[i], corrs[i], linestyle='solid', color=colors[i])
-    plt.plot(lags[i], heights[i], linestyle='dashed')
     plt.plot((peaks[i]-(WINDOW/2)), corrs[i][peaks[i]], "X")
 
 plt.subplots_adjust(hspace=0.3)
